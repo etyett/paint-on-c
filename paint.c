@@ -38,6 +38,11 @@ int main() {
     rightPixel.w = 5;
     rightPixel.h = 5;
 
+    SDL_Color leftPixelColor;
+    leftPixelColor.r = 255;
+    leftPixelColor.g = 255;
+    leftPixelColor.b = 255;
+
     SDL_Event event;
     bool running = true;
     int mouseX, mouseY;
@@ -53,7 +58,8 @@ int main() {
                 case SDL_KEYDOWN:
                     if(event.key.keysym.sym == SDLK_ESCAPE) running = false;
                     else if(event.key.keysym.sym == SDLK_c) SDL_RenderClear(renderer);
-                    else if(event.key.keysym.sym == SDLK_1) {
+
+                    if(event.key.keysym.sym == SDLK_1) {
                         leftPixel.w = 5;
                         leftPixel.h = 5;
                         rightPixel.w = 5;
@@ -83,6 +89,27 @@ int main() {
                         rightPixel.w = 25;
                         rightPixel.h = 25;
                     }
+
+                    if(event.key.keysym.sym == SDLK_r) {
+                        leftPixelColor.r = 255;
+                        leftPixelColor.g = 0;
+                        leftPixelColor.b = 0;
+                    }
+                    else if(event.key.keysym.sym == SDLK_g) {
+                        leftPixelColor.r = 0;
+                        leftPixelColor.g = 255;
+                        leftPixelColor.b = 0;
+                    }
+                    else if(event.key.keysym.sym == SDLK_b) {
+                        leftPixelColor.r = 0;
+                        leftPixelColor.g = 0;
+                        leftPixelColor.b = 255;
+                    }
+                    else if(event.key.keysym.sym == SDLK_w) {
+                        leftPixelColor.r = 255;
+                        leftPixelColor.g = 255;
+                        leftPixelColor.b = 255;
+                    }
                     break;
 
                 case SDL_MOUSEBUTTONDOWN:
@@ -90,7 +117,7 @@ int main() {
                         leftButton = true;
                         leftPixel.x = mouseX;
                         leftPixel.y = mouseY;
-                        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                        SDL_SetRenderDrawColor(renderer, leftPixelColor.r, leftPixelColor.g, leftPixelColor.b, 255);
                         SDL_RenderFillRect(renderer, &leftPixel);
                     }
                     else if(event.button.button == SDL_BUTTON_RIGHT) {
@@ -113,7 +140,7 @@ int main() {
                         if(leftButton) {
                             leftPixel.x = mouseX;
                             leftPixel.y = mouseY;
-                            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                            SDL_SetRenderDrawColor(renderer, leftPixelColor.r, leftPixelColor.g, leftPixelColor.b, 255);
                             SDL_RenderFillRect(renderer, &leftPixel);
                         }
                         else if(rightButton) {
