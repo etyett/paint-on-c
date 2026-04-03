@@ -2,21 +2,46 @@
 #include <stdbool.h>
 
 int main() {
-    SDL_Init(SDL_INIT_VIDEO);
-    
-    SDL_Window* window = SDL_CreateWindow("Paint on C", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    printf("\x1b[?1049h\x1b[2J\x1b[H");
 
-    SDL_Rect wp, bp;
-    wp.w = 10;
-    wp.h = 10;
-    bp.w = 10;
-    bp.h = 10;
+    int screen_w, screen_h;
+    printf("Enter screen weidth: ");
+    scanf("%d", &screen_w);
+    printf("Enter screen height: ");
+    scanf("%d", &screen_h);
+
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+        fprintf(stderr, "error: %s\n", SDL_GetError());
+        exit(1);
+        return -1;
+    }
+    
+    SDL_Window* window = SDL_CreateWindow("Void Draw", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_w, screen_h, SDL_WINDOW_SHOWN);
+    if(!window) {
+        fprintf(stderr, "error: %s\n", SDL_GetError());
+        SDL_Quit();
+        exit(1);
+        return -1;
+    }
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if(!renderer) {
+        fprintf(stderr, "error: %s\n", SDL_GetError());
+        SDL_Quit();
+        exit(1);
+        return -1;
+    }
+
+    SDL_Rect leftPixel, rightPixel;
+    leftPixel.w = 5;
+    leftPixel.h = 5;
+    rightPixel.w = 5;
+    rightPixel.h = 5;
 
     SDL_Event event;
     bool running = true;
-    int mX, mY;
-    bool lb = false, rb = false;
+    int mouseX, mouseY;
+    bool leftButton = false, rightButton = false;
 
     while(running) {
         while(SDL_PollEvent(&event)) {
@@ -26,72 +51,76 @@ int main() {
                     break;
                 
                 case SDL_KEYDOWN:
-                    if(event.key.keysym.sym == SDLK_ESCAPE) {
-                        running = false;
-                    }
-                    else if(event.key.keysym.sym == SDLK_c) {
-                        SDL_RenderClear(renderer);
-                    }
+                    if(event.key.keysym.sym == SDLK_ESCAPE) running = false;
+                    else if(event.key.keysym.sym == SDLK_c) SDL_RenderClear(renderer);
                     else if(event.key.keysym.sym == SDLK_1) {
-                        wp.w = 5;
-                        wp.h = 5;
-                        bp.w = 5;
-                        bp.h = 5;
+                        leftPixel.w = 5;
+                        leftPixel.h = 5;
+                        rightPixel.w = 5;
+                        rightPixel.h = 5;
                     }
                     else if(event.key.keysym.sym == SDLK_2) {
-                        wp.w = 10;
-                        wp.h = 10;
-                        bp.w = 10;
-                        bp.h = 10;
+                        leftPixel.w = 10;
+                        leftPixel.h = 10;
+                        rightPixel.w = 10;
+                        rightPixel.h = 10;
                     }
                     else if(event.key.keysym.sym == SDLK_3) {
-                        wp.w = 15;
-                        wp.h = 15;
-                        bp.w = 15;
-                        bp.h = 15;
+                        leftPixel.w = 15;
+                        leftPixel.h = 15;
+                        rightPixel.w = 15;
+                        rightPixel.h = 15;
+                    }
+                    else if(event.key.keysym.sym == SDLK_4) {
+                        leftPixel.w = 20;
+                        leftPixel.h = 20;
+                        rightPixel.w = 20;
+                        rightPixel.h = 20;
+                    }
+                    else if(event.key.keysym.sym == SDLK_5) {
+                        leftPixel.w = 25;
+                        leftPixel.h = 25;
+                        rightPixel.w = 25;
+                        rightPixel.h = 25;
                     }
                     break;
 
                 case SDL_MOUSEBUTTONDOWN:
                     if(event.button.button == SDL_BUTTON_LEFT) {
-                        lb = true;
-                        wp.x = mX;
-                        wp.y = mY;
+                        leftButton = true;
+                        leftPixel.x = mouseX;
+                        leftPixel.y = mouseY;
                         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                        SDL_RenderFillRect(renderer, &wp);
+                        SDL_RenderFillRect(renderer, &leftPixel);
                     }
                     else if(event.button.button == SDL_BUTTON_RIGHT) {
-                        rb = true;
-                        bp.x = mX;
-                        bp.y = mY;
+                        rightButton = true;
+                        rightPixel.x = mouseX;
+                        rightPixel.y = mouseY;
                         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                        SDL_RenderFillRect(renderer, &bp);
+                        SDL_RenderFillRect(renderer, &rightPixel);
                     }
                     break;
 
                     case SDL_MOUSEBUTTONUP:
-                        if(event.button.button == SDL_BUTTON_LEFT) {
-                            lb = false;
-                        }
-                        else if(event.button.button == SDL_BUTTON_RIGHT) {
-                            rb = false;
-                        }
+                        if(event.button.button == SDL_BUTTON_LEFT) leftButton = false;
+                        else if(event.button.button == SDL_BUTTON_RIGHT) rightButton = false;
                         break;
 
                     case SDL_MOUSEMOTION:
-                        mX = event.motion.x - 5;
-                        mY = event.motion.y - 5;
-                        if(lb) {
-                            wp.x = mX;
-                            wp.y = mY;
+                        mouseX = event.motion.x - 5;
+                        mouseY = event.motion.y - 5;
+                        if(leftButton) {
+                            leftPixel.x = mouseX;
+                            leftPixel.y = mouseY;
                             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                            SDL_RenderFillRect(renderer, &wp);
+                            SDL_RenderFillRect(renderer, &leftPixel);
                         }
-                        else if(rb) {
-                            bp.x = mX;
-                            bp.y = mY;
+                        else if(rightButton) {
+                            rightPixel.x = mouseX;
+                            rightPixel.y = mouseY;
                             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                            SDL_RenderFillRect(renderer, &bp);
+                            SDL_RenderFillRect(renderer, &rightPixel);
                         }
                         break;
             }
@@ -106,6 +135,8 @@ int main() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
+
+    printf("\x1b[?1049l");
 
     return 0;
 } 
